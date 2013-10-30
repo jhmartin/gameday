@@ -1,0 +1,8 @@
+[gameday]
+region = us-west-2
+access_key = AKIAI3NJAINBSHLOBZ5Q
+secret_key = 777K8YWvPIEdLBJAUwt3IQ1RjK6WmRDpVMkR4+WQ
+queue = samplequeue
+logfile = gameday.log
+pidfile = gameday.pid
+statsd = 172.31.14.12
