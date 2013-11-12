@@ -56,6 +56,10 @@
         "MinValue": "1",
         "Type": "Number"
     },
+    "messagesHighThreshold" : {
+      "Default" : "100",
+      "Type" : "Number"
+    },
     "AppServerAMI" : {
         "Description" : "The AMI to launch.",
         "Type" : "String",
@@ -199,7 +203,13 @@
             "mkdir /home/ec2-user/jobs &&",
             "wget -O /home/ec2-user/image_processor.py https://awsu-arch.s3.amazonaws.com/aux/technical-exercises/day-2/lab_1_create_batch_processing_cluster/image_processor.py &&",
             "curl -sk http://CbvkpUmqfjgB0JEL@api.copperegg.com/rc.sh | sh &&",
-            "yum install tmux"
+            "yum install tmux &&",
+            "INPUT_QUEUE=", { "Fn::GetAtt" : ["sqsInputQueue", "QueueName"]},
+            "OUTPUT_QUEUE=",{ "Fn::GetAtt" : ["sqsOutputQueue", "QueueName"]},
+            "S3_BUCKET=",{ "Ref": "gamedaybucket" },
+            
+            "/usr/bin/python /home/ec2-user/image_processor.py --input-queue $INPUT_QUEUE --output-queue $OUTPUT_QUEUE --s3-output-bucket $S3_BUCKET &",
+            "/usr/bin/python /home/ec2-user/image_processor.py --input-queue $INPUT_QUEUE --output-queue $OUTPUT_QUEUE --s3-output-bucket $S3_BUCKET &"
                         ]]}
             }
         },
@@ -298,6 +308,31 @@
         "MetricName": "CPUUtilization"
       }
     },
+    "messagesHighAlarm": {
+      "Type": "AWS::CloudWatch::Alarm",
+      "Properties": {
+        "EvaluationPeriods": "5",
+        "Statistic": "Average",
+        "Threshold": { "Ref" : "messagesHighThreshold" },
+        "AlarmDescription": "Alarm if there are a high number of ",
+        "Period": "300",
+        "AlarmActions": [
+          { "Ref": "appServerScaleDownPolicy" }
+        ],
+        "Namespace": "AWS/EC2",
+        "Dimensions": [
+          {
+            "Name": "AutoScalingGroupName",
+            "Value": {
+              "Ref": "appServerAutoScalingGroup"
+            }
+          }
+        ],
+        "ComparisonOperator": "LessThanThreshold",
+        "MetricName": "CPUUtilization"
+      }
+    },
+    
     "productAutoScalingEventSNS" : {
         "Type" : "AWS::SNS::Topic"
     },
