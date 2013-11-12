@@ -124,7 +124,7 @@
                 },
                 {
                   "Effect": "Allow",
-                  "Action": [ "s3:Get*", "s3:List*" ],
+                  "Action": [ "s3:*" ],
                   "Resource": "*"
                 },
                 {
@@ -317,12 +317,12 @@
         "EvaluationPeriods": "5",
         "Statistic": "Average",
         "Threshold": { "Ref" : "messagesHighThreshold" },
-        "AlarmDescription": "Alarm if there are a high number of ",
+        "AlarmDescription": "Alarm if there are a high number of messages",
         "Period": "300",
         "AlarmActions": [
-          { "Ref": "appServerScaleDownPolicy" }
+          { "Ref": "appServerScaleUpPolicy" }
         ],
-        "Namespace": "AWS/EC2",
+        "Namespace": "AWS/SQS",
         "Dimensions": [
           {
             "Name": "QueueName",
