@@ -330,10 +330,36 @@
         ],
         "ComparisonOperator": "LessThanThreshold",
         "MetricName": "CPUUtilization"
-      }
+    }
     },
-    
+    "GameDayHighCPUAlarm": {
+        "Type": "AWS::CloudWatch::Alarm",
+        "Properties": {
+              "EvaluationPeriods": "1",
+              "Statistic": "Average",
+              "Threshold": "90",
+              "AlarmDescription": "Notify if CPU utilization is too hight.",
+              "Period": "300",
+              "AlarmActions": [
+                { "Ref": "BatchProcessingNotifications" }
+              ],
+        "Namespace": "AWS/EC2",
+        "Dimensions": [
+                {
+                  "Name": "AutoScalingGroupName",
+                  "Value": {
+                    "Ref": "appServerAutoScalingGroup"
+                  }
+                }
+              ],
+              "ComparisonOperator": "GreaterThanThreshold",
+              "MetricName": "CPUUtilization"
+            }
+    },
     "productAutoScalingEventSNS" : {
+        "Type" : "AWS::SNS::Topic"
+    },
+    "BatchProcessingNotifications" : {
         "Type" : "AWS::SNS::Topic"
     },
     "gamedaybucket" : {
@@ -353,8 +379,10 @@
       "Properties" : {
         "QueueName": "gamedayoutput"
       }
-    }  
+    }
+    }
+
+
     
     
-}
 }
