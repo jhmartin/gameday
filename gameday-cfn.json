@@ -237,7 +237,7 @@
             "HealthCheckGracePeriod" : "1800",
             "HealthCheckType" : "ELB",
             "Tags" : [
-                    {"Key" : "Name", "Value" : "gameday-server", "PropagateAtLaunch" : "true"}
+                    {"Key" : "Name", "Value" : { "Fn::Join" : ["-", [{ "Ref" : "AWS::StackName" },"-gameday-server"] ] }, "PropagateAtLaunch" : "true"}
             ],
             "NotificationConfiguration" : {
                 "TopicARN" : { "Ref" : "productAutoScalingEventSNS" },
